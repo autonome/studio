@@ -1,0 +1,7 @@
+#details gaia-list {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: calc(100% - 50px);
+  overflow: scroll;
+}

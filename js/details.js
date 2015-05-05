@@ -27,6 +27,14 @@
       });
 
       window.addEventListener('AutoTheme:palette', this.onPalette);
+      var panel = this.panel;
+      panel.addEventListener('pop', function onPop() {
+        panel.removeEventListener('pop', onPop);
+
+        window.removeEventListener('AutoTheme:palette', Details.onPalette);
+        AutoTheme.clean();
+        AutoTheme.showPalette(Details.autotheme);
+      });
 
       return Storage.fetchTheme(params.id).then((theme) => {
         currentTheme = theme;
@@ -170,11 +178,7 @@
       return;
     }
 
-    window.removeEventListener('AutoTheme:palette', Details.onPalette);
-    Navigation.pop().then(() => {
-      AutoTheme.clean();
-      AutoTheme.showPalette(Details.autotheme);
-    });
+    Navigation.pop();
   });
 
   exports.Details = Details;

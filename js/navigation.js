@@ -44,7 +44,18 @@
       toPop.classList.add('next');
       stack[stack.length - 1].classList.remove('back');
 
-      return this.waitForTransition();
+      return this.waitForTransition().then(() => {
+        toPop.dispatchEvent(new CustomEvent('pop'));
+      });
+    },
+
+    popToRoot: function() {
+      return this.pop().then(() => {
+        if (stack.length == 1) {
+          return;
+        }
+        return this.pop();
+      });
     }
   };
 })(window);

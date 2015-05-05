@@ -18,6 +18,8 @@
     autotheme: document.querySelector('#edit-color .autotheme-palette'),
 
     prepareForDisplay: function(params) {
+      var defer = new Defer();
+
       currentTheme = params.theme;
 
       this.title.textContent = params.group + ' / ' + params.section;
@@ -25,6 +27,14 @@
       AutoTheme.showPalette(this.autotheme);
 
       this.picker.addEventListener('change', this.onPickerChange.bind(this));
+
+      var panel = this.panel;
+      panel.addEventListener('pop', function onPop() {
+        panel.removeEventListener('pop', onPop);
+
+        Edit.editColor.classList.remove('editing');
+        Edit.iframe.src = '';
+      });
 
       var currentList = this.list.querySelector('gaia-list');
       if (currentList) {
@@ -40,6 +50,8 @@
           var body = this.iframe.contentDocument.body;
           body.style.setProperty(key, currentSection[key]);
         });
+
+        defer.resolve();
       };
 
       Object.keys(currentSection).forEach((key) => {
@@ -72,7 +84,7 @@
       this.list.appendChild(list);
       this.list.scrollTop = 0;
 
-      return this.panel;
+      return defer.promise.then(() => this.panel);
     },
 
     pick: function(key) {
@@ -97,7 +109,6 @@
     }
 
     Navigation.pop();
-    Edit.iframe.src = '';
   });
 
   Edit.panel.addEventListener('click', function(evt) {
